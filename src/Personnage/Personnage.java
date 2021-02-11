@@ -50,8 +50,8 @@ public class Personnage {
         ImageIcon ico;
         Image img;
 
-        if (this.walking == false || Main.scene.getxPos() <= 0) { // perso stop or we are on the left of the game
-            if (this.turnRight == true) {
+        if (!this.walking || Main.scene.getxPos() <= 0) { // perso stop or we are on the left of the game
+            if (this.turnRight) {
                 str = "/Images/" + name + "ArretDroite.png";
             } else {
                 str = "/Images/" + name + "ArretGauche.png";
@@ -59,13 +59,13 @@ public class Personnage {
         } else {
             this.stepCount++;
             if (this.stepCount / frequency == 0) { // number is integer, not float
-                if (this.turnRight == true) {
+                if (this.turnRight) {
                     str = "/Images/" + name + "ArretDroite.png";
                 } else {
                     str = "/Images/" + name + "ArretGauche.png";
                 }
             } else {
-                if (this.turnRight == true) {
+                if (this.turnRight) {
                     str = "/Images/" + name + "MarcheDroite.png";
                 } else {
                     str = "/Images/" + name + "MarcheGauche.png";
@@ -81,15 +81,15 @@ public class Personnage {
 
         return img;
     }
+
     public boolean contactBefore(Object object) {
-        if (this.isTurnRight() == true) {
-            if (this.x + this.width < object.getX() // too left
-                    || this.x + this.width > object.getX() + 5 // too right
-                    || this.y + this.height <= object.getY() // too under
-                    || this.y >= object.getY() + object.getHeight()) { // too upper
-                return false;
-            } else { return true; }
-        } else {
+        if (this.isTurnRight()) {
+            return Main.scene.getxPos() + this.getWidth() == this.getX() && this.y + this.height > object.getY() && this.y < object.getY() + object.getHeight();
+        }
+        else if (!this.isTurnRight()) {
+            return Main.scene.getxPos() - object.getWidth()  == this.getX() && this.y + this.height > object.getY() && this.y < object.getY() + object.getHeight();
+        }
+        else {
             return false;
         }
     }

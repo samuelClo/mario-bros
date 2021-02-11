@@ -24,6 +24,10 @@ public class Keyboard implements KeyListener {
             Main.scene.mario.setTurnRight(false);
             Main.scene.setDx(-1); // move left
         }
+        // mario saute
+        if(e.getKeyCode() == KeyEvent.VK_SPACE){
+            Main.scene.mario.setJump(true);
+        }
     }
 
     @Override

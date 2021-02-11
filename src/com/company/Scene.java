@@ -7,20 +7,19 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Scene extends JPanel {
-    private ImageIcon icoBackground;
-    private Image backgroundImage1;
-    private Image backgroundImage2;
+    private final Image backgroundImage1;
+    private final Image backgroundImage2;
 
-    private ImageIcon icoCastle1;
-    private Image imgCastle1;
-    private ImageIcon icoStart;
-    private Image imgStart;
+    private final Image imgCastle1;
+    private final Image imgStart;
 
     private int xBackground1; // coord of left top background
     private int xBackground2;
 
     private int dx; // use to translate the background with Keyboard.java
     private int xPos;
+    private int roofHeight;
+    private int yFloor;
 
     public Mario mario;
     public RedPipe redPipe1;
@@ -32,15 +31,17 @@ public class Scene extends JPanel {
         this.xBackground2 = 750;
         this.dx = 0;
         this.xPos = -1;
+        this.roofHeight = 0;
+        this.yFloor = 295;
 
-        icoBackground = new ImageIcon(getClass().getResource("/Images/fondEcran.png"));
-        this.backgroundImage1 = this.icoBackground.getImage();
-        this.backgroundImage2 = this.icoBackground.getImage();
+        ImageIcon icoBackground = new ImageIcon(getClass().getResource("/Images/fondEcran.png"));
+        this.backgroundImage1 = icoBackground.getImage();
+        this.backgroundImage2 = icoBackground.getImage();
 
-        icoCastle1 = new ImageIcon(getClass().getResource("/Images/chateau1.png"));
-        this.imgCastle1 = this.icoCastle1.getImage();
-        icoStart = new ImageIcon(getClass().getResource("/Images/depart.png"));
-        this.imgStart = this.icoStart.getImage();
+        ImageIcon icoCastle1 = new ImageIcon(getClass().getResource("/Images/chateau1.png"));
+        this.imgCastle1 = icoCastle1.getImage();
+        ImageIcon icoStart = new ImageIcon(getClass().getResource("/Images/depart.png"));
+        this.imgStart = icoStart.getImage();
 
         // instantiate elements
         mario = new Mario(300, 245);
@@ -69,6 +70,14 @@ public class Scene extends JPanel {
     public int getxBackground2() { return xBackground2; }
     public void setxBackground2(int xBackground2) { this.xBackground2 = xBackground2; }
 
+    public int getRoofHeight() {
+        return roofHeight;
+    }
+
+    public int getyFloor() {
+        return yFloor;
+    }
+
     public void translateBackground() {
         if (this.xPos >= 0) { // go to the right
            this.xPos = this.xPos + this.dx; // set xPos for know how long we move
@@ -85,25 +94,28 @@ public class Scene extends JPanel {
 
     public void paintComponent(Graphics g) { // call on each repaint by Main.scene.repaint();
         super.paintComponent(g);
-        Graphics g2 = (Graphics2D)g;
 
         // Detect contact
-        if (this.mario.contactBefore(redPipe1) == true) {
-            this.mario.setWalking(false);
+        if (this.mario.contactBefore(redPipe1)) {
+            this.dx = 0;
+        }
+        if (this.mario.contactBefore(bloc1)) {
             this.dx = 0;
         }
 
         this.translateBackground(); // if this.dx change, the background translate
-        this.redPipe1.move();
+        // this.redPipe1.move();
 
 
-        g2.drawImage(this.backgroundImage1, this.xBackground1, 0, null); // background image draw
-        g2.drawImage(this.backgroundImage2, this.xBackground2, 0, null);
-        g2.drawImage(imgCastle1, 10 - this.xPos, 95, null); //10 - this.xPos to place element on the same place
-        g2.drawImage(imgStart, 220 - this.xPos, 234, null);
+        g.drawImage(this.backgroundImage1, this.xBackground1, 0, null); // background image draw
+        g.drawImage(this.backgroundImage2, this.xBackground2, 0, null);
+        g.drawImage(imgCastle1, 10 - this.xPos, 95, null); //10 - this.xPos to place element on the same place
+        g.drawImage(imgStart, 220 - this.xPos, 234, null);
 
-        g2.drawImage(this.mario.walk("mario", 50), 300, 245, null);
-        g2.drawImage(this.redPipe1.getImgRedPipe(), this.redPipe1.getX() - this.xPos, this.redPipe1.getY(), null);
-        g2.drawImage(this.bloc1.getImgBloc(), this.bloc1.getX() - this.xPos, this.bloc1.getY(), null);
+        //g.drawImage(this.mario.walk("mario", 50), 300, 245, null);
+        g.drawImage(this.redPipe1.getImgRedPipe(), this.redPipe1.getX() - this.xPos, this.redPipe1.getY(), null);
+        g.drawImage(this.bloc1.getImgBloc(), this.bloc1.getX() - this.xPos, this.bloc1.getY(), null);
+        if(this.mario.isJumping()){ g.drawImage(this.mario.jump(), this.mario.getX(), this.mario.getY(), null);}
+        else{ g.drawImage(this.mario.walk("mario", 25), this.mario.getX(), this.mario.getY(), null);}
     }
 }
